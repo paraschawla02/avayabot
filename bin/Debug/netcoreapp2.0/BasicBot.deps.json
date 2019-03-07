@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.0",
-    "signature": "4ad5de654e4e7ee91306e04451e7b051014d74ac"
+    "signature": "8e4a014f9bc21b96b07620a57cb5d55d42dd5502"
   },
   "compilationOptions": {
     "defines": [
@@ -38,7 +38,8 @@
           "Microsoft.Bot.Schema": "4.1.5",
           "Microsoft.Graph": "1.10.0",
           "Microsoft.NETCore.App": "2.0.0",
-          "StyleCop.Analyzers": "1.1.0-beta008"
+          "StyleCop.Analyzers": "1.1.0-beta008",
+          "websocket-sharp.clone": "3.0.0"
         },
         "runtime": {
           "BasicBot.dll": {}
@@ -4699,6 +4700,17 @@
           "System.Xml.XPath": "4.3.0"
         }
       },
+      "websocket-sharp.clone/3.0.0": {
+        "runtime": {
+          "lib/net45/websocket-sharp.clone.dll": {
+            "assemblyVersion": "1.0.2.39869",
+            "fileVersion": "1.0.2.0"
+          }
+        },
+        "compile": {
+          "lib/net45/websocket-sharp.clone.dll": {}
+        }
+      },
       "WindowsAzure.Storage/9.3.2": {
         "dependencies": {
           "NETStandard.Library": "2.0.0",
@@ -7074,6 +7086,13 @@
       "sha512": "sha512-jw9oHHEIVW53mHY9PgrQa98Xo2IZ0ZjrpdOTmtvk+Rvg4tq7dydmxdNqUvJ5YwjDqhn75mBXWttWjiKhWP53LQ==",
       "path": "system.xml.xpath.xdocument/4.3.0",
       "hashPath": "system.xml.xpath.xdocument.4.3.0.nupkg.sha512"
+    },
+    "websocket-sharp.clone/3.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-nQc2xOUSzHOX48adBOQdIi6Z+D/7huwLR489OhzsJWavHc7M+WfYOGdhcbbWEyOnN84GRvlr30LBhy/1B5g/0g==",
+      "path": "websocket-sharp.clone/3.0.0",
+      "hashPath": "websocket-sharp.clone.3.0.0.nupkg.sha512"
     },
     "WindowsAzure.Storage/9.3.2": {
       "type": "package",

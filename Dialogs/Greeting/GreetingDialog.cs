@@ -216,7 +216,7 @@ namespace Microsoft.BotBuilderSamples
             var greetingState = await UserProfileAccessor.GetAsync(context);
 
             // Display their profile information and end dialog.
-            await context.SendActivityAsync($"Hi {greetingState.Name}, from {greetingState.City}, nice to meet you!");
+            await context.SendActivityAsync($"Hi {greetingState.Name}, from {greetingState.City}, nice to meet you! How may i help you today");
             return await stepContext.EndDialogAsync();
         }
     }

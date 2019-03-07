@@ -4,7 +4,6 @@ C:\Users\pchawla\Desktop\Chatbot\Azure Microsoft\avaya_test\bin\Debug\netcoreapp
 C:\Users\pchawla\Desktop\Chatbot\Azure Microsoft\avaya_test\bin\Debug\netcoreapp2.0\BasicBot.runtimeconfig.dev.json
 C:\Users\pchawla\Desktop\Chatbot\Azure Microsoft\avaya_test\bin\Debug\netcoreapp2.0\BasicBot.dll
 C:\Users\pchawla\Desktop\Chatbot\Azure Microsoft\avaya_test\bin\Debug\netcoreapp2.0\BasicBot.pdb
-C:\Users\pchawla\Desktop\Chatbot\Azure Microsoft\avaya_test\obj\Debug\netcoreapp2.0\BasicBot.csprojAssemblyReference.cache
 C:\Users\pchawla\Desktop\Chatbot\Azure Microsoft\avaya_test\obj\Debug\netcoreapp2.0\BasicBot.csproj.CoreCompileInputs.cache
 C:\Users\pchawla\Desktop\Chatbot\Azure Microsoft\avaya_test\obj\Debug\netcoreapp2.0\BasicBot.AssemblyInfoInputs.cache
 C:\Users\pchawla\Desktop\Chatbot\Azure Microsoft\avaya_test\obj\Debug\netcoreapp2.0\BasicBot.AssemblyInfo.cs

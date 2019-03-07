@@ -12,6 +12,8 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using WebSocketSharp;
+
 
 namespace Microsoft.BotBuilderSamples
 {
@@ -26,6 +28,8 @@ namespace Microsoft.BotBuilderSamples
         public const string HelpIntent = "Help";
         public const string NoneIntent = "None";
         public const string AgentIntent = "Agent";
+        public const string ResetPasswordIntent = "Password_reset";
+        public const string TicketStatusIntent = "Ticket_Status";
 
         /// <summary>
         /// Key in the bot config (.bot file) for the LUIS instance.
@@ -33,6 +37,8 @@ namespace Microsoft.BotBuilderSamples
         /// </summary>
         public static readonly string LuisConfiguration = "BasicBotLuisApplication";
 
+        private readonly IStatePropertyAccessor<PasswordResetState> _passwordresetStateAccessor;
+        private readonly IStatePropertyAccessor<TicketStatusState> _ticketstatusStateAccessor;
         private readonly IStatePropertyAccessor<GreetingState> _greetingStateAccessor;
         private readonly IStatePropertyAccessor<DialogState> _dialogStateAccessor;
         private readonly UserState _userState;
@@ -52,6 +58,8 @@ namespace Microsoft.BotBuilderSamples
 
             _greetingStateAccessor = _userState.CreateProperty<GreetingState>(nameof(GreetingState));
             _dialogStateAccessor = _conversationState.CreateProperty<DialogState>(nameof(DialogState));
+            _passwordresetStateAccessor = _userState.CreateProperty<PasswordResetState>(nameof(PasswordResetState));
+            _ticketstatusStateAccessor = _userState.CreateProperty<TicketStatusState>(nameof(TicketStatusState));
 
             // Verify LUIS configuration.
             if (!_services.LuisServices.ContainsKey(LuisConfiguration))
@@ -61,6 +69,8 @@ namespace Microsoft.BotBuilderSamples
 
             Dialogs = new DialogSet(_dialogStateAccessor);
             Dialogs.Add(new GreetingDialog(_greetingStateAccessor, loggerFactory));
+            Dialogs.Add(new PasswordResetDialog(_passwordresetStateAccessor, loggerFactory));
+            Dialogs.Add(new TicketStatusDialog(_ticketstatusStateAccessor, loggerFactory));
         }
 
         private DialogSet Dialogs { get; set; }
@@ -91,7 +101,7 @@ namespace Microsoft.BotBuilderSamples
 
                 // update greeting state with any entities captured
                 await UpdateGreetingState(luisResults, dc.Context);
-
+                await UpdatePasswordResetState(luisResults, dc.Context);
                 // Handle conversation interrupts first.
                 var interrupted = await IsTurnInterruptedAsync(dc, topIntent);
                 if (interrupted)
@@ -118,7 +128,12 @@ namespace Microsoft.BotBuilderSamples
                                 case GreetingIntent:
                                     await dc.BeginDialogAsync(nameof(GreetingDialog));
                                     break;
-                               
+                                case ResetPasswordIntent:
+                                    await dc.BeginDialogAsync(nameof(PasswordResetDialog));
+                                    break;
+                                case TicketStatusIntent:
+                                    await dc.BeginDialogAsync(nameof(TicketStatusDialog));
+                                    break;
                                 case NoneIntent:
                                 default:
                                     // Help or no intent identified, either way, let's provide some help.
@@ -274,6 +289,86 @@ namespace Microsoft.BotBuilderSamples
 
                 // Set the new values into state.
                 await _greetingStateAccessor.SetAsync(turnContext, greetingState);
+            }
+        }
+
+        /// <summary>
+        /// Helper function to update greeting state with entities returned by LUIS.
+        /// </summary>
+        /// <param name="luisResult">LUIS recognizer <see cref="RecognizerResult"/>.</param>
+        /// <param name="turnContext">A <see cref="ITurnContext"/> containing all the data needed
+        /// for processing this conversation turn.</param>
+        /// <returns>A task that represents the work queued to execute.</returns>
+        private async Task UpdatePasswordResetState(RecognizerResult luisResult, ITurnContext turnContext)
+        {
+            if (luisResult.Entities != null && luisResult.Entities.HasValues)
+            {
+                // Get latest GreetingState
+                var passwordresetstate = await _passwordresetStateAccessor.GetAsync(turnContext, () => new PasswordResetState());
+                var entities = luisResult.Entities;
+
+                // Supported LUIS Entities
+                string[] userotpEntities = { "OTP" };
+               
+
+                // Update any entities
+                // Note: Consider a confirm dialog, instead of just updating.
+                foreach (var otp in userotpEntities)
+                {
+                    // Check if we found valid slot values in entities returned from LUIS.
+                    if (entities[otp] != null)
+                    {
+                        // Capitalize and set new user name.
+                        var newotp = (string)entities[otp][0];
+                        passwordresetstate.OTP = char.ToUpper(newotp[0]) + newotp.Substring(1);
+                        break;
+                    }
+                }
+
+             
+
+                // Set the new values into state.
+                await _passwordresetStateAccessor.SetAsync(turnContext, passwordresetstate);
+            }
+        }
+
+        /// <summary>
+        /// Helper function to update greeting state with entities returned by LUIS.
+        /// </summary>
+        /// <param name="luisResult">LUIS recognizer <see cref="RecognizerResult"/>.</param>
+        /// <param name="turnContext">A <see cref="ITurnContext"/> containing all the data needed
+        /// for processing this conversation turn.</param>
+        /// <returns>A task that represents the work queued to execute.</returns>
+        private async Task UpdateTicketStatusState(RecognizerResult luisResult, ITurnContext turnContext)
+        {
+            if (luisResult.Entities != null && luisResult.Entities.HasValues)
+            {
+                // Get latest GreetingState
+                var ticketstatusstate = await _ticketstatusStateAccessor.GetAsync(turnContext, () => new TicketStatusState());
+                var entities = luisResult.Entities;
+
+                // Supported LUIS Entities
+                string[] userticketstatusEntities = { "TicketNumber" };
+
+
+                // Update any entities
+                // Note: Consider a confirm dialog, instead of just updating.
+                foreach (var ticketnumber in userticketstatusEntities)
+                {
+                    // Check if we found valid slot values in entities returned from LUIS.
+                    if (entities[ticketnumber] != null)
+                    {
+                        // Capitalize and set new user name.
+                        var newticketnumber = (string)entities[ticketnumber][0];
+                        ticketstatusstate.TicketNumber = char.ToUpper(newticketnumber[0]) + newticketnumber.Substring(1);
+                        break;
+                    }
+                }
+
+
+
+                // Set the new values into state.
+                await _ticketstatusStateAccessor.SetAsync(turnContext, ticketstatusstate);
             }
         }
     }

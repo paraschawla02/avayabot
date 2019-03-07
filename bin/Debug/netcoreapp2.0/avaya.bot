@@ -1,61 +1,63 @@
 {
-  "name": "avaya",
-  "padlock": "lSqwKDmwUdAH/lrtdfVbYg==!wHlpE31f3qMLl5Y9MSpBizc4OhG8iw/rgG58Z9jKkZhZBXEv7uMOFhBaNu5DUGf/",
-  "version": "2.0",
-  "services": [
-    {
-      "tenantId": "f6f79575-b0ed-4b05-8ad0-dec185b04632",
-      "subscriptionId": "5709cd62-9154-419a-9bd9-eb8ab1d5ab3c",
-      "resourceGroup": "resgroup1",
-      "serviceName": "avaya",
-      "type": "abs",
-      "name": "avaya",
-      "id": "1"
-    },
-    {
-      "connectionString": "5pGg9JkjfABDyC4P9FdqJQ==!eiXDaWgzOBV+CV3u+hwRhGp5/+4dmMgakDo8gSyLFhHf/yy8F5mEAOqd8DMNra5lrG2Lc9nzSJjq8SA0uMkP6lakoc/W2QWWrszwzQrMroQOs5Dwp75wzL9CDO2drcmGYRs9RKqSd2+URGsJ3oceM3Mfeh9NB/B5/bw69r965fZxUUTcicPrWkESgnZ7xaPi3VkEvWQxRher8qYyv93IjA==",
-      "tenantId": "f6f79575-b0ed-4b05-8ad0-dec185b04632",
-      "subscriptionId": "5709cd62-9154-419a-9bd9-eb8ab1d5ab3c",
-      "resourceGroup": "resgroup1",
-      "serviceName": "avaya99cf",
-      "type": "blob",
-      "id": "2"
-    },
-    {
-      "appId": "",
-      "appPassword": "",
-      "endpoint": "http://localhost:3978/api/messages",
-      "type": "endpoint",
-      "name": "development",
-      "id": "3"
-    },
-    {
-      "appId": "7f714b33-0dff-4935-8b20-fba31b199837",
-      "appPassword": "pHOZUzpmeBbDo5UBIVtz3Q==!SMB7pWClVRKILzTllt9tKoKvzD8kzIp18Xc7hk1LTRM=",
-      "endpoint": "https://avaya.azurewebsites.net/api/messages",
-      "type": "endpoint",
-      "name": "production",
-      "id": "4"
-    },
-    {
-      "instrumentationKey": "PiqUbocgTAQzd06btGp8xA==!og39xIxC5UDkUussjPryVfrw/6CHrTJEZd0dJdKsXqsrZPkFqfuBoe9jdZyeN2O6",
-      "applicationId": "eb0e1998-8f29-4bdb-bb7a-b03692c19948",
-      "apiKeys": {},
-      "tenantId": "f6f79575-b0ed-4b05-8ad0-dec185b04632",
-      "subscriptionId": "5709cd62-9154-419a-9bd9-eb8ab1d5ab3c",
-      "resourceGroup": "resgroup1",
-      "serviceName": "avayabodmr6",
-      "type": "appInsights",
-      "id": "5"
-    },
-    {
-      "appId": "df73a5ab-6602-4d57-8838-81df6680e5d9",
-      "authoringKey": "/5VTkiIH9t+5uH1Y4bhBrA==!vPqmWsCPa4EWqArbXhFdQDcG98bLQ83roInrZ2U4Nm8pXG6kj+Qwk4N1BsCBkpJi",
-      "version": "0.1",
-      "region": "westus",
-      "type": "luis",
-      "name": "BasicBotLuisApplication",
-      "id": "6"
-    }
-  ]
+    "name": "avaya",
+    "description": "",
+    "services": [
+        {
+            "type": "abs",
+            "tenantId": "f6f79575-b0ed-4b05-8ad0-dec185b04632",
+            "subscriptionId": "5709cd62-9154-419a-9bd9-eb8ab1d5ab3c",
+            "resourceGroup": "resgroup1",
+            "serviceName": "avaya",
+            "name": "avaya",
+            "id": "1",
+            "appId": "7f714b33-0dff-4935-8b20-fba31b199837"
+        },
+        {
+            "type": "blob",
+            "connectionString": "gUabsBsEWBG1MCVYsdL1Dg==!IaMPdL2RZ0Zl/p2EChfAuCx2w+e+084L8ngV6BwdwhTyduWTuA29YyRc7ZYJUSFqVErpIiAN6I6yaSqCfts0tIuJAT+5uthRtFefffCSGN1ZYBJBxPkksaNne2rS1GljTVUCNB0HxngNObAUoIApXWpw1C3uDyhdpHG/rXotdI3l3BInJddHfNeP8/cWw+/mef6OTB072mtVx/pyqO/0Kw==",
+            "tenantId": "f6f79575-b0ed-4b05-8ad0-dec185b04632",
+            "subscriptionId": "5709cd62-9154-419a-9bd9-eb8ab1d5ab3c",
+            "resourceGroup": "resgroup1",
+            "serviceName": "avaya99cf",
+            "id": "2"
+        },
+        {
+            "type": "endpoint",
+            "appId": "",
+            "appPassword": "",
+            "endpoint": "http://localhost:3978/api/messages",
+            "name": "development",
+            "id": "3"
+        },
+        {
+            "type": "endpoint",
+            "appId": "7f714b33-0dff-4935-8b20-fba31b199837",
+            "appPassword": "e+hXrUvVWbVF7TAkg4LeZA==!Nzxj78yqD+3vOzhSt/t7oLsGgr49ucl+Dj0LD7eOuGg=",
+            "endpoint": "https://avaya.azurewebsites.net/api/messages",
+            "name": "production",
+            "id": "4"
+        },
+        {
+            "type": "appInsights",
+            "instrumentationKey": "QcMGqb2wTFWvXo+z+aHrMA==!0Lzp3nI0QdudHeGoCHFNsRoSZfy+b2CRL5jGGO7wm2gx2ybcsGYHVvLSuzRtGJPk",
+            "applicationId": "eb0e1998-8f29-4bdb-bb7a-b03692c19948",
+            "apiKeys": {},
+            "tenantId": "f6f79575-b0ed-4b05-8ad0-dec185b04632",
+            "subscriptionId": "5709cd62-9154-419a-9bd9-eb8ab1d5ab3c",
+            "resourceGroup": "resgroup1",
+            "serviceName": "avayabodmr6",
+            "id": "5"
+        },
+        {
+            "type": "luis",
+            "appId": "df73a5ab-6602-4d57-8838-81df6680e5d9",
+            "authoringKey": "PtvwA32szpdSyJ71ENoEOA==!yOidfSA7EQ7LkraXHXphba4Z3m1BPA7WrPTrOzKHSuFXFkF0BnaC55xt1na0njIj",
+            "version": "0.1",
+            "region": "westus",
+            "name": "BasicBotLuisApplication",
+            "id": "6"
+        }
+    ],
+    "padlock": "IWHpwg4NriMoZKybja9A9w==!tHRj6LCtVyKns+DVxNjTMwQoWcpZEosMG5rjLHKGHgYg2kPAlEgBWG8RFc0J93aE",
+    "version": "2.0"
 }

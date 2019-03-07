@@ -5119,6 +5119,15 @@
           "lib/netstandard1.3/System.Xml.XPath.XDocument.dll": {}
         }
       },
+      "websocket-sharp.clone/3.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net45/websocket-sharp.clone.dll": {}
+        },
+        "runtime": {
+          "lib/net45/websocket-sharp.clone.dll": {}
+        }
+      },
       "WindowsAzure.Storage/9.3.2": {
         "type": "package",
         "dependencies": {
@@ -13547,6 +13556,19 @@
         "system.xml.xpath.xdocument.nuspec"
       ]
     },
+    "websocket-sharp.clone/3.0.0": {
+      "sha512": "nQc2xOUSzHOX48adBOQdIi6Z+D/7huwLR489OhzsJWavHc7M+WfYOGdhcbbWEyOnN84GRvlr30LBhy/1B5g/0g==",
+      "type": "package",
+      "path": "websocket-sharp.clone/3.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/websocket-sharp.clone.dll",
+        "lib/net45/websocket-sharp.clone.xml",
+        "websocket-sharp.clone.3.0.0.nupkg.sha512",
+        "websocket-sharp.clone.nuspec"
+      ]
+    },
     "WindowsAzure.Storage/9.3.2": {
       "sha512": "77ma1/kP2l/HEQLMUub7yF3nuF5Pycal72+IhHPKqxSfX3c/M+Nkjl3DyE1JHcWgdQFICqYg2wwb19sABECmDg==",
       "type": "package",
@@ -13588,7 +13610,8 @@
       "Microsoft.Bot.Schema >= 4.1.5",
       "Microsoft.Graph >= 1.10.0",
       "Microsoft.NETCore.App >= 2.0.0",
-      "StyleCop.Analyzers >= 1.1.0-beta008"
+      "StyleCop.Analyzers >= 1.1.0-beta008",
+      "websocket-sharp.clone >= 3.0.0"
     ]
   },
   "packageFolders": {
@@ -13694,6 +13717,10 @@
             "suppressParent": "All",
             "target": "Package",
             "version": "[1.1.0-beta008, )"
+          },
+          "websocket-sharp.clone": {
+            "target": "Package",
+            "version": "[3.0.0, )"
           }
         },
         "imports": [
@@ -13703,5 +13730,17 @@
         "warn": true
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'websocket-sharp.clone 3.0.0' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "libraryId": "websocket-sharp.clone",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v2.0"
+      ]
+    }
+  ]
 }
