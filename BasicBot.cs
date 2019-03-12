@@ -4,16 +4,21 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Linq;
+using System.Net;
 using System.Threading;
+using System.Net.WebSockets;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Web;
+using System.Net.Http;
 using WebSocketSharp;
-
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.BotBuilderSamples
 {
@@ -23,6 +28,8 @@ namespace Microsoft.BotBuilderSamples
     public class BasicBot : IBot
     {
         // Supported LUIS Intents
+        static int agentchatstarted ;
+        
         public const string GreetingIntent = "Greeting";
         public const string CancelIntent = "Cancel";
         public const string HelpIntent = "Help";
@@ -30,11 +37,17 @@ namespace Microsoft.BotBuilderSamples
         public const string AgentIntent = "Agent";
         public const string ResetPasswordIntent = "Password_reset";
         public const string TicketStatusIntent = "Ticket_Status";
-
+        private static UTF8Encoding encoding = new UTF8Encoding();
+        
         /// <summary>
         /// Key in the bot config (.bot file) for the LUIS instance.
         /// In the .bot file, multiple instances of LUIS can be configured.
         /// </summary>
+        /// 
+        private const string url = "ws://192.168.210.49:8081/CustomerControllerWeb/chat";
+        private string authenticationKey;
+        private static ClientWebSocket ws =new ClientWebSocket();
+
         public static readonly string LuisConfiguration = "BasicBotLuisApplication";
 
         private readonly IStatePropertyAccessor<PasswordResetState> _passwordresetStateAccessor;
@@ -44,7 +57,7 @@ namespace Microsoft.BotBuilderSamples
         private readonly UserState _userState;
         private readonly ConversationState _conversationState;
         private readonly BotServices _services;
-
+       
         /// <summary>
         /// Initializes a new instance of the <see cref="BasicBot"/> class.
         /// </summary>
@@ -52,10 +65,11 @@ namespace Microsoft.BotBuilderSamples
         /// <param name="accessors">Bot State Accessors.</param>
         public BasicBot(BotServices services, UserState userState, ConversationState conversationState, ILoggerFactory loggerFactory)
         {
+            
             _services = services ?? throw new ArgumentNullException(nameof(services));
             _userState = userState ?? throw new ArgumentNullException(nameof(userState));
             _conversationState = conversationState ?? throw new ArgumentNullException(nameof(conversationState));
-
+            
             _greetingStateAccessor = _userState.CreateProperty<GreetingState>(nameof(GreetingState));
             _dialogStateAccessor = _conversationState.CreateProperty<DialogState>(nameof(DialogState));
             _passwordresetStateAccessor = _userState.CreateProperty<PasswordResetState>(nameof(PasswordResetState));
@@ -86,13 +100,28 @@ namespace Microsoft.BotBuilderSamples
             var activity = turnContext.Activity;
 
             // Create a dialog context
-            var dc = await Dialogs.CreateContextAsync(turnContext);
+            
+              var  dc = await Dialogs.CreateContextAsync(turnContext);
+            
+            if (agentchatstarted == 1)
+            {
+                try
+                {
+                    await Send("data", turnContext.Activity.Text.ToString(), dc);
+                   await Receive(dc);
+                    return;
+                }
+                catch(Exception ex)
+                {
 
+
+                }
+            }
             if (activity.Type == ActivityTypes.Message)
             {
                 // Perform a call to LUIS to retrieve results for the current activity message.
                 var luisResults = await _services.LuisServices[LuisConfiguration].RecognizeAsync(dc.Context, cancellationToken);
-
+                agentchatstarted = 0;
                 // If any entities were updated, treat as interruption.
                 // For example, "no my name is tony" will manifest as an update of the name to be "tony".
                 var topScoringIntent = luisResults?.GetTopScoringIntent();
@@ -204,6 +233,7 @@ namespace Microsoft.BotBuilderSamples
             {
                 await dc.Context.SendActivityAsync("Let me try to provide some help.");
                 await dc.Context.SendActivityAsync("I understand greetings, being asked for help, or being asked to cancel what I am doing.");
+            
                 if (dc.ActiveDialog != null)
                 {
                     await dc.RepromptDialogAsync();
@@ -213,7 +243,55 @@ namespace Microsoft.BotBuilderSamples
             }
             if (topIntent.Equals(AgentIntent))
             {
-                await dc.Context.SendActivityAsync("Please wait,we are connecting you to live agent.");
+               
+
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://192.168.210.49:8081/CustomerControllerWeb/currentqueue");
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Method = "POST";
+                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                {
+                    string json = "{\"skillset\":\"" + "" + "\"}";
+                    streamWriter.Write(json);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                }
+                try
+                {
+                    var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                    var result = "";
+                    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                    {
+                         result = streamReader.ReadToEnd();
+                    }
+                    var jsonObj = JObject.Parse(result);
+                    var values = (JArray)jsonObj["body"]["metrics"];
+                    int agentinqueue=0;
+                    foreach (var value in values)
+                    {
+                        agentinqueue = (int)value["availableAgentsInQueue"];
+                        if(agentinqueue>0)
+                        {
+                            await dc.Context.SendActivityAsync("Please wait,we are connecting you to live agent.");
+                            try
+                            {
+
+                                Connect(dc);
+
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
+                        }
+                        else
+                        {
+                            await dc.Context.SendActivityAsync("No agent available this time.Please try again later.");
+                          
+                        }
+                    };
+                }
+                catch(Exception ex)
+                { }
                 if (dc.ActiveDialog != null)
                 {
                     await dc.RepromptDialogAsync();
@@ -223,6 +301,8 @@ namespace Microsoft.BotBuilderSamples
             }
             return false;           // Did not handle the interrupt.
         }
+
+    
 
         // Create an attachment message response.
         private Activity CreateResponse(Activity activity, Attachment attachment)
@@ -309,7 +389,6 @@ namespace Microsoft.BotBuilderSamples
 
                 // Supported LUIS Entities
                 string[] userotpEntities = { "OTP" };
-               
 
                 // Update any entities
                 // Note: Consider a confirm dialog, instead of just updating.
@@ -370,6 +449,124 @@ namespace Microsoft.BotBuilderSamples
                 // Set the new values into state.
                 await _ticketstatusStateAccessor.SetAsync(turnContext, ticketstatusstate);
             }
+        }
+
+        public async Task Connect(DialogContext dc)
+        {
+            while (ws.State != System.Net.WebSockets.WebSocketState.Open)
+            {
+                try
+                {
+                    await ws.ConnectAsync(new Uri(url), CancellationToken.None);
+                    Console.WriteLine("Web socket : " + ws.State);
+                    await Task.WhenAll(Receive(dc), Send("connect", "dummy", dc));
+                    await Receive(dc);
+                    Console.WriteLine("Sending connect request...");
+                }
+                catch(Exception ex)
+                {
+
+                }
+
+                while (true)
+                {
+                    Thread.Sleep(500);
+                    await Send("ping", "dummy", dc);
+                    await Receive(dc);
+                }
+
+
+            }
+        }
+
+        public async Task Send(string type,string senddata, DialogContext dc)
+        {
+            StringBuilder message = new StringBuilder();
+          
+            // We send a connect request
+            if (type == "connect")
+            {
+                message.Append("{\"apiVersion\":\"1.0\",\"type\":\"request\",\"body\":{\"method\":\"requestChat\",\"guid\":null,\"authenticationKey\":null,\"deviceType\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36\",\"requestTranscript\":false,\"intrinsics\":{\"email\":\"\",\"name\":\"paras\",\"country\":\"+7 840\",\"area\":\"\",\"phoneNumber\":\"\",\"skillset\":\"WC_Default_Skillset\",\"customFields\":[{\"title\":\"address\",\"value\":\"\"}]}}}");
+                agentchatstarted = 1;
+                Console.WriteLine("Send message : " + message.ToString());
+                var sendBuffer = new ArraySegment<Byte>(Encoding.UTF8.GetBytes(message.ToString()));
+                await ws.SendAsync(sendBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                
+                type = "ping";
+
+            }
+         
+            if (type == "ping")
+            {
+                message.Append("{\"apiVersion\":\"1.0\",\"type\":\"request\",\"body\":{\"method\":\"ping\"}}");
+                Console.WriteLine("Send message : " + message.ToString());
+                var sendBuffer = new ArraySegment<Byte>(Encoding.UTF8.GetBytes(message.ToString()));
+                await ws.SendAsync(sendBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                
+                
+            }
+            if(type=="data")
+            {
+                try
+                {
+                    message.Append("{\"apiVersion\":\"1.0\",\"type\":\"request\",\"body\":{\"method\":\"newMessage\",\"message\":\""+senddata.ToString()+"\"}}");
+                    Console.WriteLine("Send message : " + message.ToString());
+                    var sendBuffer = new ArraySegment<Byte>(Encoding.UTF8.GetBytes(message.ToString()));
+                    Console.WriteLine("Web socket : " + ws.State);
+                    
+                    await ws.SendAsync(sendBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("Error in send data : " + ex.ToString());
+                }
+            }
+            else
+            {
+                Console.WriteLine("No valid message type");
+                return;
+            }
+
+            
+        }
+
+        public async Task Receive(DialogContext dc)
+        {
+            try
+             {
+                ArraySegment<byte> receivedBytes = new ArraySegment<byte>(new byte[1024]);
+                WebSocketReceiveResult result = await ws.ReceiveAsync(receivedBytes, CancellationToken.None);
+
+                Console.WriteLine(Encoding.UTF8.GetString(receivedBytes.Array, 0, result.Count));
+                var jsonObj = JObject.Parse(Encoding.UTF8.GetString(receivedBytes.Array, 0, result.Count));
+                string method = JObject.Parse(jsonObj.ToString())["body"]["method"].ToString();
+               // string method = Convert.ToString((JArray)jsonObj["body"]["method"]);
+              
+               
+                    if (method.ToString() == "newMessage")
+                {
+                    var message = JObject.Parse(jsonObj.ToString())["body"]["message"].ToString();
+                    await dc.Context.SendActivityAsync(message.ToString());
+                }
+                else
+                if (method.ToString() == "participantLeave")
+                {
+                    agentchatstarted = 0;
+                    await ws.CloseAsync(WebSocketCloseStatus.NormalClosure,"closing WS",CancellationToken.None);
+                    Console.WriteLine("WebSocket closed."+ ws.CloseStatus);
+                    ws.Abort();
+                    
+                    await dc.Context.SendActivityAsync("chat has been closed");
+                }
+                else
+                    if (method.ToString() == "newParticipant")
+                {
+                    await dc.Context.SendActivityAsync("Agent joined.");
+                }
+                
+            }
+            catch (Exception ex)
+            { }
         }
     }
 }
