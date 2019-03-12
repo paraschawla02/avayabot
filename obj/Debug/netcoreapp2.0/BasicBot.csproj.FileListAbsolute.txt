@@ -9,4 +9,3 @@ C:\Users\pchawla\Desktop\Chatbot\Azure Microsoft\avaya_test\obj\Debug\netcoreapp
 C:\Users\pchawla\Desktop\Chatbot\Azure Microsoft\avaya_test\obj\Debug\netcoreapp2.0\BasicBot.AssemblyInfo.cs
 C:\Users\pchawla\Desktop\Chatbot\Azure Microsoft\avaya_test\obj\Debug\netcoreapp2.0\BasicBot.dll
 C:\Users\pchawla\Desktop\Chatbot\Azure Microsoft\avaya_test\obj\Debug\netcoreapp2.0\BasicBot.pdb
-C:\Users\pchawla\Desktop\Chatbot\Azure Microsoft\avaya_test\obj\Debug\netcoreapp2.0\BasicBot.csprojAssemblyReference.cache

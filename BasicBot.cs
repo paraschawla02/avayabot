@@ -44,8 +44,8 @@ namespace Microsoft.BotBuilderSamples
         /// In the .bot file, multiple instances of LUIS can be configured.
         /// </summary>
         /// 
-       private const string url = "ws://122.176.109.48:8081/CustomerControllerWeb/chat";
-        // private const string url = "ws://192.168.210.49:8081/CustomerControllerWeb/chat";
+      private const string url = "ws://122.176.109.48:8081/CustomerControllerWeb/chat";
+       // private const string url = "ws://192.168.210.49:8081/CustomerControllerWeb/chat";
         private const string queueurl = "http://122.176.109.48:8081/CustomerControllerWeb/currentqueue";
         private string authenticationKey;
         private static ClientWebSocket ws =new ClientWebSocket();
@@ -459,6 +459,10 @@ namespace Microsoft.BotBuilderSamples
             {
                 try
                 {
+                    if(ws.State.ToString()=="Closed")
+                    {
+                        ws = new ClientWebSocket();
+                    }
                     await ws.ConnectAsync(new Uri(url), CancellationToken.None);
                     Console.WriteLine("Web socket : " + ws.State);
                     await Task.WhenAll(Receive(dc), Send("connect", "dummy", dc));
