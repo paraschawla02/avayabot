@@ -24,7 +24,7 @@ namespace Microsoft.BotBuilderSamples
         private const string GreetingStateProperty = "greetingState";
         private const string NameValue = "greetingName";
         private const string CityValue = "greetingCity";
-
+        BasicBot obj = new BasicBot();
         // Prompts names
         private const string NamePrompt = "namePrompt";
         private const string CityPrompt = "cityPrompt";
@@ -104,6 +104,8 @@ namespace Microsoft.BotBuilderSamples
                         Text = "What is your name?",
                     },
                 };
+                obj.adddata("Bot: What is your name?");
+
                 return await stepContext.PromptAsync(NamePrompt, opts);
             }
             else
@@ -136,6 +138,8 @@ namespace Microsoft.BotBuilderSamples
                         Text = $"Hello {greetingState.Name}, what city do you live in?",
                     },
                 };
+
+                obj.adddata("Bot: Hello, what city do you live in?");
                 return await stepContext.PromptAsync(CityPrompt, opts);
             }
             else
@@ -216,6 +220,7 @@ namespace Microsoft.BotBuilderSamples
             var greetingState = await UserProfileAccessor.GetAsync(context);
 
             // Display their profile information and end dialog.
+            obj.adddata($"Bot: Hi { greetingState.Name}, from { greetingState.City}, nice to meet you!How may i help you today");
             await context.SendActivityAsync($"Hi {greetingState.Name}, from {greetingState.City}, nice to meet you! How may i help you today");
             return await stepContext.EndDialogAsync();
         }

@@ -9,6 +9,7 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 
+
 namespace Microsoft.BotBuilderSamples
 {
     /// <summary>
@@ -24,7 +25,7 @@ namespace Microsoft.BotBuilderSamples
         private const string PasswordResetProperty = "passwordresetState";
         private const string OTP = "OTP";
         private const string MobileNumber = "MobileNumber";
-
+        BasicBot obj = new BasicBot();
         // Prompts names
         private const string OTPPrompt = "otpPrompt";
         private const string MobileNumberPrompt = "MobileNumberPrompt";
@@ -102,9 +103,11 @@ namespace Microsoft.BotBuilderSamples
                     Prompt = new Activity
                     {
                         Type = ActivityTypes.Message,
+
                         Text = "Please enter OTP sent to registered mobile number/Email ?",
                     },
                 };
+              obj.adddata("Bot: Please enter OTP sent to registered mobile number/Email");
                 return await stepContext.PromptAsync(OTPPrompt, opts);
             }
             else
@@ -133,9 +136,11 @@ namespace Microsoft.BotBuilderSamples
                     Prompt = new Activity
                     {
                         Type = ActivityTypes.Message,
-                        Text = "Please enter your registered Mobile Number with us ?",
+                        Text = "Please enter your registered Mobile Number with us",
+
                     },
                 };
+                obj.adddata("Bot: Please enter your registered Mobile Number with us");
                 return await stepContext.PromptAsync(MobileNumberPrompt, opts);
             }
             else
@@ -181,6 +186,7 @@ namespace Microsoft.BotBuilderSamples
             }
             else
             {
+                obj.adddata("Bot: OTP needs to be at least 6 characters long.");
                 await promptContext.Context.SendActivityAsync($"OTP needs to be at least 6 characters long.");
                 return false;
             }
@@ -204,6 +210,8 @@ namespace Microsoft.BotBuilderSamples
             }
             else
             {
+                obj.adddata("Bot: Mobile Number needs to be at least 10 characters long.");
+         
                 await promptContext.Context.SendActivityAsync($"Mobile Number needs to be at least 10 characters long.");
                 return false;
             }
@@ -217,6 +225,8 @@ namespace Microsoft.BotBuilderSamples
             var passwordresetState = await PassworsResetAccessor.GetAsync(context);
 
             // Display their profile information and end dialog.
+
+            obj.adddata("Bot: your Password reset successfully.Is there any other query?");
             await context.SendActivityAsync($"your Password reset successfully.Is there any other query?");
             return await stepContext.EndDialogAsync();
         }
@@ -228,6 +238,8 @@ namespace Microsoft.BotBuilderSamples
             var passwordresetState = await PassworsResetAccessor.GetAsync(context);
 
             // Display their profile information and end dialog.
+            obj.adddata("Bot: Your number is registered with us.");
+
             await context.SendActivityAsync($"Your number is registered with us.");
             return await stepContext.EndDialogAsync();
         }
