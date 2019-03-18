@@ -24,7 +24,7 @@ namespace Microsoft.BotBuilderSamples
         private const string TicketStatusProperty = "ticketstatusState";
         private const string TicketNumber = "TicketNumber";
         private const string MobileNumber = "MobileNumber";
-
+        BasicBot obj = new BasicBot();
         // Prompts names
         private const string TicketNumberPrompt = "TicketNumberPrompt";
         private const string MobileNumberPrompt = "MobileNumberPrompt";
@@ -102,9 +102,10 @@ namespace Microsoft.BotBuilderSamples
                     Prompt = new Activity
                     {
                         Type = ActivityTypes.Message,
-                        Text = "Please enter Ticket Number to know its status ?",
+                        Text = "Please enter Ticket Number to know its status.",
                     },
                 };
+                obj.adddata("Bot: Please enter Ticket Number to know its status");
                 return await stepContext.PromptAsync(TicketNumberPrompt, opts);
             }
             else
@@ -133,9 +134,10 @@ namespace Microsoft.BotBuilderSamples
                     Prompt = new Activity
                     {
                         Type = ActivityTypes.Message,
-                        Text = "Please enter your registered Mobile Number with us ?",
+                        Text = "Please enter your registered Mobile Number with us",
                     },
                 };
+                obj.adddata("Bot: Please enter your registered Mobile Number with us");
                 return await stepContext.PromptAsync(MobileNumberPrompt, opts);
             }
             else
@@ -181,6 +183,7 @@ namespace Microsoft.BotBuilderSamples
             }
             else
             {
+                obj.adddata("Bot: OTP needs to be at least 6 characters long.");
                 await promptContext.Context.SendActivityAsync($"OTP needs to be at least 6 characters long.");
                 return false;
             }
@@ -204,6 +207,7 @@ namespace Microsoft.BotBuilderSamples
             }
             else
             {
+                obj.adddata("Mobile Number needs to be at least 10 characters long.");
                 await promptContext.Context.SendActivityAsync($"Mobile Number needs to be at least 10 characters long.");
                 return false;
             }
@@ -217,6 +221,7 @@ namespace Microsoft.BotBuilderSamples
             var ticketstatusstate = await TicketStatusAccessor.GetAsync(context);
 
             // Display their profile information and end dialog.
+            obj.adddata("your ticket is under process.Kindly contact +91XXXX for more details.Let me know in case of any query.");
             await context.SendActivityAsync($"your ticket is under process.Kindly contact +91XXXX for more details.Let me know in case of any query.");
             return await stepContext.EndDialogAsync();
         }
@@ -228,6 +233,7 @@ namespace Microsoft.BotBuilderSamples
             var ticketstatusstate = await TicketStatusAccessor.GetAsync(context);
 
             // Display their profile information and end dialog.
+            obj.adddata("Your number is registered with us");
             await context.SendActivityAsync($"Your number is registered with us.");
             return await stepContext.EndDialogAsync();
         }
