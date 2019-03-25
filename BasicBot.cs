@@ -37,6 +37,9 @@ namespace Microsoft.BotBuilderSamples
         public const string AgentIntent = "Agent";
         public const string ResetPasswordIntent = "Password_reset";
         public const string TicketStatusIntent = "Ticket_Status";
+        public const string DeadlineIntent = "Deadline_completion";
+        public const string OnBoardingIntent = "OnBoarding_Process";
+        public const string ThankyouIntent = "Thankyou";
         private static UTF8Encoding encoding = new UTF8Encoding();
 
         /// <summary>
@@ -251,6 +254,45 @@ namespace Microsoft.BotBuilderSamples
                 await dc.Context.SendActivityAsync("Let me try to provide some help.");
                 await dc.Context.SendActivityAsync("I understand greetings, being asked for help, or being asked to cancel what I am doing.");
             
+                if (dc.ActiveDialog != null)
+                {
+                    await dc.RepromptDialogAsync();
+                }
+
+                return true;        // Handled the interrupt.
+            }
+            if (topIntent.Equals(OnBoardingIntent))
+            {
+                chatdata.Add("Bot: Sure Mr. X, I am your HR buddy. Here is the link of onboarding process.");
+                chatdata.Add("https://www.avaya.com");
+                await dc.Context.SendActivityAsync("Sure, I am your HR buddy. Here is the link of onboarding process.");
+                await dc.Context.SendActivityAsync("https://www.avaya.com");
+
+                if (dc.ActiveDialog != null)
+                {
+                    await dc.RepromptDialogAsync();
+                }
+
+                return true;        // Handled the interrupt.
+            }
+
+            if (topIntent.Equals(DeadlineIntent))
+            {
+                chatdata.Add("Bot: As per new deadline Mr. X, you will have to complete all activities by 31st of this month. You will get mail notifications as reminder. ");
+                await dc.Context.SendActivityAsync("As per new deadline Mr. X, you will have to complete all activities by 31st of this month. You will get mail notifications as reminder.");
+
+                if (dc.ActiveDialog != null)
+                {
+                    await dc.RepromptDialogAsync();
+                }
+
+                return true;        // Handled the interrupt.
+            }
+            if (topIntent.Equals(ThankyouIntent))
+            {
+                chatdata.Add("Bot: Thanks for contacting us.");
+                await dc.Context.SendActivityAsync("Thanks for contacting us.");
+
                 if (dc.ActiveDialog != null)
                 {
                     await dc.RepromptDialogAsync();
